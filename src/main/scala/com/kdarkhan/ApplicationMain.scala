@@ -8,14 +8,14 @@ import com.kdarkhan.actors._
   * Created by monstar on 12/1/16.
   */
 object ApplicationMain extends App {
-  val proposers = startup(2551, RoleEnum.Proposer, 1, Proposer.props, "proposers")
-  val acceptors = startup(2552, RoleEnum.Acceptor, 5, Acceptor.props, "acceptors")
+  val proposers = startup(2551, Role.Proposer, 1, Proposer.props, "proposers")
+  val acceptors = startup(2552, Role.Acceptor, 5, Acceptor.props, "acceptors")
 
 //  Await.result(proposers.whenTerminated, Duration.Inf)
 //  Await.result
 
   def startup(port: Int,
-              role: RoleEnum.RoleEnum,
+              role: Role.Role,
               nodeCount: Int,
               props: Props,
               path: String): ActorSystem = {

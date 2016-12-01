@@ -3,7 +3,7 @@ package com.kdarkhan.actors
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.cluster.Cluster
 import com.kdarkhan.Messages._
-import com.kdarkhan.RoleEnum
+import com.kdarkhan.Role
 import collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,7 +23,7 @@ class Proposer extends Actor with ActorLogging {
     case MTick =>
       highestProposal += 1
       fromAcceptors = Nil
-      ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, RoleEnum.Acceptor) foreach { address =>
+      ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, Role.Acceptor) foreach { address =>
         log.debug(s"Proposer sending new proposal $highestProposal")
         context.actorSelection(s"$address/user/*").tell(MPrepare(highestProposal), self)
       }
@@ -37,11 +37,11 @@ class Proposer extends Actor with ActorLogging {
           val withValues = fromAcceptors filter (_.acceptedId.nonEmpty)
           if (withValues.nonEmpty) {
             val maxValue = withValues.maxBy(_.acceptedId)
-            ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, RoleEnum.Acceptor) foreach { address =>
+            ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, Role.Acceptor) foreach { address =>
               context.actorSelection(s"$address/user/*").tell(MAccept(highestProposal, maxValue.acceptedValue.get), self)
             }
           } else {
-            ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, RoleEnum.Acceptor) foreach { address =>
+            ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, Role.Acceptor) foreach { address =>
               context.actorSelection(s"$address/user/*").tell(MAccept(highestProposal, scala.util.Random.nextInt), self)
             }
           }
@@ -55,7 +55,7 @@ class Proposer extends Actor with ActorLogging {
   }
 
   private def acceptorQuorum(count: Int): Boolean = {
-    ActorUtils.countRoleMembers(cluster.state.getMembers.asScala, RoleEnum.Acceptor) / 2 + 1 >= count
+    ActorUtils.countRoleMembers(cluster.state.getMembers.asScala, Role.Acceptor) / 2 + 1 >= count
   }
 }
 
