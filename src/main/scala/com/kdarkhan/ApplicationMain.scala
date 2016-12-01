@@ -10,6 +10,7 @@ import com.kdarkhan.actors._
 object ApplicationMain extends App {
   val proposers = startup(2551, Role.Proposer, 1, Proposer.props, "proposers")
   val acceptors = startup(2552, Role.Acceptor, 5, Acceptor.props, "acceptors")
+  val learners = startup(2553, Role.Learner, 1, Learner.props, "learners")
 
 //  Await.result(proposers.whenTerminated, Duration.Inf)
 //  Await.result

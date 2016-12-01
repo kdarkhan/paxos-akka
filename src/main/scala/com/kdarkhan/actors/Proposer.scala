@@ -18,7 +18,7 @@ class Proposer extends Actor with ActorLogging {
 
   var fromAcceptors: List[MPromise] = Nil
 
-  context.system.scheduler.schedule(0.seconds, 15.seconds, self, MTick)
+  context.system.scheduler.schedule(0.seconds, 5.seconds, self, MTick)
   override def receive: Receive = {
     case MTick =>
       highestProposal += 1
@@ -42,12 +42,11 @@ class Proposer extends Actor with ActorLogging {
             }
           } else {
             ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, Role.Acceptor) foreach { address =>
-              context.actorSelection(s"$address/user/*").tell(MAccept(highestProposal, scala.util.Random.nextInt), self)
+              context.actorSelection(s"$address/user/*").tell(MAccept(highestProposal, ActorUtils.getRandomInt(0, 10000)), self)
             }
           }
         }
       }
-
 
     case other =>
       log.error(s"========================================== Unhandled message: $other")

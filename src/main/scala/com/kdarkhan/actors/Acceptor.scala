@@ -3,6 +3,10 @@ package com.kdarkhan.actors
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.cluster.Cluster
 import com.kdarkhan.Messages._
+import collection.JavaConverters._
+import com.kdarkhan.Role
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by monstar on 12/2/16.
@@ -14,7 +18,10 @@ class Acceptor extends Actor with ActorLogging {
   private val accepted = collection.mutable.HashMap.empty[Int, Int]
 
 
-  override def receive: Receive = {
+  override def receive: Receive = active
+  scheduleSleep()
+
+  def active: Receive = {
     case MPrepare(id) =>
       log.debug(s"Acceptor received Prepare with id ${id}")
       if (!highestResponded.exists(_ >= id)) {
@@ -34,9 +41,35 @@ class Acceptor extends Actor with ActorLogging {
       log.debug(s"Acceptor received MAccept($id, $value)")
       if (!highestResponded.exists(_ > id)) {
         accepted.put(id, value)
+
+        ActorUtils.getClusterAddress(cluster.state.getMembers.asScala, Role.Learner) foreach { address =>
+          log.debug(s"Acceptor notifying learner about $id")
+          context.actorSelection(s"$address/user/*").tell(MLearn(id, value), self)
+        }
       }
 
+    case MSleep =>
+      log.error(s"Process ${self.path} going to sleep")
+      context.become(inactive)
+      scheduleWakeup()
+
     case x => log.error(s"Unhandled message: $x")
+
+  }
+
+  def inactive: Receive = {
+    case MWakeup =>
+      log.debug("Learner is waking up")
+      context.become(active)
+      scheduleSleep()
+    case x => log.debug("Acceptor is sleeping and ignoring messages")
+  }
+
+  private def scheduleSleep(from: Int = 3000, to: Int = 13000): Unit = {
+    context.system.scheduler.scheduleOnce(ActorUtils.getRandomInt(from, to).milliseconds, self, MSleep)
+  }
+  private def scheduleWakeup(from: Int = 3000, to: Int = 5000): Unit = {
+    context.system.scheduler.scheduleOnce(ActorUtils.getRandomInt(from, to).milliseconds, self, MWakeup)
   }
 }
 

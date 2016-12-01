@@ -19,4 +19,12 @@ object ActorUtils {
   def getClusterAddress(members: Iterable[Member], role: Role): Option[String] = {
     members.find(_.roles.contains(role.toString)) map (_.address.toString)
   }
+
+  private val r = new scala.util.Random()
+
+  r.setSeed(System.currentTimeMillis())
+
+  def getRandomInt(from: Int, to: Int): Int = {
+    r.nextInt(to - from) + from
+  }
 }
