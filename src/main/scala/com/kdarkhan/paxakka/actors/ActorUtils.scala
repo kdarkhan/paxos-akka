@@ -1,7 +1,7 @@
-package com.kdarkhan.actors
+package com.kdarkhan.paxakka.actors
 
 import akka.cluster.Member
-import com.kdarkhan.Role.Role
+import com.kdarkhan.paxakka.Role.Role
 
 /**
   * Created by monstar on 12/2/16.

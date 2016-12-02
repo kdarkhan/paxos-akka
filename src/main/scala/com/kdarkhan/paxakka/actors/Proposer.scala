@@ -1,9 +1,10 @@
-package com.kdarkhan.actors
+package com.kdarkhan.paxakka.actors
 
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.cluster.Cluster
-import com.kdarkhan.Messages._
-import com.kdarkhan.Role
+import com.kdarkhan.paxakka.Messages.{MAccept, MPrepare, MPromise, MTick}
+import com.kdarkhan.paxakka.Role
+
 import collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -1,4 +1,4 @@
-package com.kdarkhan
+package com.kdarkhan.paxakka
 
 /**
   * Created by monstar on 12/1/16.

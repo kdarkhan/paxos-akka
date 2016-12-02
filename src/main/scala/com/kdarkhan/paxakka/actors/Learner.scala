@@ -1,9 +1,9 @@
-package com.kdarkhan.actors
+package com.kdarkhan.paxakka.actors
 
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.cluster.Cluster
-import com.kdarkhan.Messages.MLearn
-import com.kdarkhan.Role
+import com.kdarkhan.paxakka.Messages.MLearn
+import com.kdarkhan.paxakka.Role
 
 import collection.JavaConverters._
 import scala.collection.mutable

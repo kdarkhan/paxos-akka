@@ -1,8 +1,8 @@
-package com.kdarkhan
+package com.kdarkhan.paxakka
 
 import akka.actor.{ActorSystem, Props}
 import com.typesafe.config.ConfigFactory
-import com.kdarkhan.actors._
+import com.kdarkhan.paxakka.actors.{Acceptor, Learner, Proposer}
 
 /**
   * Created by monstar on 12/1/16.

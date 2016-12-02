@@ -1,4 +1,4 @@
-package com.kdarkhan
+package com.kdarkhan.paxakka
 
 object Role extends Enumeration {
   type Role = Value
